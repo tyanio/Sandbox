@@ -7,7 +7,7 @@ using namespace std;
 
 int main()
 {
-    int loops = 100;
+    int loops = 2;
     auto msec = 0;
 
     for (int i = 0; i < loops; i++)
