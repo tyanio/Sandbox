@@ -11,7 +11,7 @@ int main()
 {
     int nVariables = 10000;
     int variableBound = 2;
-    int nElements = 10000;
+    int nElements = 1;
 
     auto start = chrono::system_clock::now();
 
