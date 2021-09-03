@@ -8,7 +8,7 @@ using namespace MEDDLY;
 
 typedef long element_type;
 
-int main(int argc, char *argv[])
+std::chrono::_V2::system_clock::rep experiment1()
 {
     int nVariables = 10;
     int variableBound = 2;
@@ -52,7 +52,6 @@ int main(int argc, char *argv[])
     forest *bdd = d->createForest(false, forest::BOOLEAN, forest::MULTI_TERMINAL, p);
 
     dd_edge A(bdd);
-    dd_edge B(bdd);
     dd_edge C(bdd);
 
     dd_edge *vars = new dd_edge[nVariables];
@@ -75,10 +74,36 @@ int main(int argc, char *argv[])
 
     auto end = chrono::system_clock::now();
 
-    C.show(meddlyout, 2);
-    bdd->showInfo(meddlyout);
+    free(element);
+    free(bounds);
+    delete[] vars;
+    cleanup();
+
+    // C.show(meddlyout, 2);
+    // bdd->showInfo(meddlyout);
 
     auto dur = end - start;
     auto msec = chrono::duration_cast<chrono::nanoseconds>(dur).count();
-    cout << msec << "nano sec \n";
+    // cout << msec << "nano sec \n";
+    return msec;
+}
+
+int main()
+{
+    int nTrials = 10;
+    std::chrono::_V2::system_clock::rep nanosec = 0;
+    for (int i = 0; i < nTrials; i++)
+    {
+        std::cout << "index: " << i << '\n';
+        try
+        {
+            nanosec += experiment1();
+        }
+        catch (const error &e)
+        {
+            std::cerr << e.getName() << '\n';
+        }
+    }
+    nanosec /= nTrials;
+    cout << nanosec << "nano sec \n";
 }
