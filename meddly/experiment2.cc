@@ -53,6 +53,7 @@ int main(int argc, char *argv[])
 
     dd_edge A(bdd);
     dd_edge B(bdd);
+    dd_edge C(bdd);
 
     dd_edge *vars = new dd_edge[nVariables];
     FILE_output meddlyout(stdout);
@@ -65,19 +66,30 @@ int main(int argc, char *argv[])
 
     bdd->createEdge(true, B);
 
-    auto start = chrono::system_clock::now();
-
     for (int i = 0; i < nVariables; i++)
     {
         B *= vars[i];
     }
 
-    auto end = chrono::system_clock::now();
+    int loops = 100;
+    std::chrono::_V2::system_clock::rep msec = 0;
 
-    // C.show(meddlyout, 2);
+    for (size_t i = 0; i < loops; i++)
+    {
+        bdd->createEdge(true, C);
+        auto start = chrono::system_clock::now();
+        for (int i = 0; i < nVariables; i++)
+        {
+            C *= vars[i];
+        }
+        auto end = chrono::system_clock::now();
+        auto dur = end - start;
+        msec += chrono::duration_cast<chrono::nanoseconds>(dur).count();
+    }
+
+    C.show(meddlyout, 2);
     // bdd->showInfo(meddlyout);
 
-    auto dur = end - start;
-    auto msec = chrono::duration_cast<chrono::nanoseconds>(dur).count();
+    msec /= loops;
     cout << msec << " nano sec \n";
 }
