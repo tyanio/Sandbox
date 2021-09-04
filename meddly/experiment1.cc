@@ -10,7 +10,7 @@ typedef long element_type;
 
 int main(int argc, char *argv[])
 {
-    int nVariables = 10;
+    int nVariables = 10000;
     int variableBound = 2;
     int nElements = nVariables;
 
@@ -75,10 +75,10 @@ int main(int argc, char *argv[])
 
     auto end = chrono::system_clock::now();
 
-    C.show(meddlyout, 2);
-    bdd->showInfo(meddlyout);
+    // C.show(meddlyout, 2);
+    // bdd->showInfo(meddlyout);
 
     auto dur = end - start;
     auto msec = chrono::duration_cast<chrono::nanoseconds>(dur).count();
-    cout << msec << "nano sec \n";
+    cout << msec << " nano sec \n";
 }
