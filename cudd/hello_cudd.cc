@@ -9,16 +9,16 @@ struct DdChildren
     DdNode* E;
 };
 
-struct DdNode
-{
-    uint32_t index;
-    uint32_t ref;
-    union
-    {
-        CUDD_VALUE_TYPE value;
-        DdChildren kids;
-    };
-};
+// struct DdNode
+// {
+//     uint32_t index;
+//     uint32_t ref;
+//     union
+//     {
+//         CUDD_VALUE_TYPE value;
+//         DdChildren kids;
+//     };
+// };
 
 struct DdManager{
     DdNode* one;
