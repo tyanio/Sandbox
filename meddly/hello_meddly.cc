@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string.h>
 #include "meddly.h"
+#include "meddly_expert.h"
 
 using namespace MEDDLY;
 
@@ -10,7 +11,7 @@ int main(int argc, char *argv[])
 {
     int nVariables = 2;
     int variableBound = 2;
-    int nElements = 4;
+    int nElements = 1;
     int nTerms = 0;
 
     int bounds[nVariables] = {2, 2};
@@ -26,11 +27,9 @@ int main(int argc, char *argv[])
         element[i][0] = 0;
         for (int j = nVariables; j > 0; --j)
         {
-            element[i][j] = int(float(variableBound) * rand() / (RAND_MAX + 1.0));
+            element[i][j] = 1;
             assert(element[i][j] >= 0 && element[i][j] < variableBound);
         }
-        terms[i] =
-            element_type(float(nTerms) * rand() / (RAND_MAX + 1.0));
     }
 
     initialize();
@@ -45,8 +44,12 @@ int main(int argc, char *argv[])
 
     dd_edge A(bdd);
 
-    bdd->createEdge(element, terms, nElements, A);
+    bdd->createEdge(element, nElements, A);
 
     FILE_output meddlyout(stdout);
     A.show(meddlyout, 2);
+
+    expert_forest *f = (expert_forest *)A.getForest();
+
+    auto un = unpacked_node::newFull(f, 2, 2);
 }
