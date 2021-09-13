@@ -12,6 +12,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+    auto nVariable = 10000;
     DdManager *gbm;                                                /* Global BDD manager. */
     gbm = Cudd_Init(0, 0, CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS, 0); /* Initialize a new BDD manager. */
     DdNode *bdd, *var, *tmp_neg, *tmp;
@@ -20,7 +21,7 @@ int main(int argc, char *argv[])
 
     auto start = chrono::system_clock::now();
 
-    for (int j = 10000; j >= 0; j--)
+    for (int j = nVariable; j >= 0; j--)
     {
         var = Cudd_bddIthVar(gbm, j);     /*Create a new BDD variable*/
         tmp = Cudd_bddAnd(gbm, var, bdd); /*Perform AND Boolean operation*/
