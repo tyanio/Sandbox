@@ -1,94 +1,38 @@
-#include <stdio.h>
+#include <sys/types.h>
+#include <sys/time.h>
 #include <iostream>
+#include <string.h>
+#include <time.h>
+#include <math.h>
+#include <stdlib.h>
+#include "cudd.h"
 #include <chrono>
-#include "cuddObj.hh"
 
 using namespace std;
 
-void random_vars(int, BDD &, Cudd &, int);
-
-int main()
+int main(int argc, char *argv[])
 {
-    const int nVariables = 10000;
-    const int loops = 1;
-    auto msec = 0;
+    DdManager *gbm;                                                /* Global BDD manager. */
+    gbm = Cudd_Init(0, 0, CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS, 0); /* Initialize a new BDD manager. */
+    DdNode *bdd, *var, *tmp_neg, *tmp;
+    bdd = Cudd_ReadOne(gbm); /*Returns the logic one constant of the manager*/
+    Cudd_Ref(bdd);           /*Increases the reference count of a node*/
 
-    Cudd cudd;
-    for (int i = 0; i < nVariables; i++)
+    auto start = chrono::system_clock::now();
+
+    for (int j = 10000; j >= 0; j--)
     {
-        cudd.bddVar();
+        var = Cudd_bddIthVar(gbm, j);     /*Create a new BDD variable*/
+        tmp = Cudd_bddAnd(gbm, var, bdd); /*Perform AND Boolean operation*/
+        Cudd_Ref(tmp);
+        Cudd_RecursiveDeref(gbm, bdd);
+        bdd = tmp;
     }
 
-    for (int i = 0; i < loops; i++)
-    {
-        auto start = chrono::system_clock::now();
+    auto end = chrono::system_clock::now();
+    auto dur = end - start;
+    Cudd_Quit(gbm);
+    cout << "time: " << chrono::duration_cast<chrono::nanoseconds>(dur).count() << " nano secs." << endl;
 
-        BDD f = cudd.bddVar(0);
-
-        for (int i = 1; i < nVariables; i++)
-        {
-            f = f * cudd.bddVar(i);
-        }
-
-        auto end = chrono::system_clock::now();
-
-        // f.PrintCover();
-
-        auto dur = end - start;
-        // cout << chrono::duration_cast<chrono::microseconds>(dur).count() << endl;
-        msec += chrono::duration_cast<chrono::microseconds>(dur).count();
-
-        // Cudd_PrintDebug(cudd.getManager(), f.getNode(), nVariables, 3);
-    }
-
-    msec /= loops;
-    cout << "average: " << msec << " micro sec \n";
+    return 0;
 }
-
-// void random_vars(int nVariables, BDD &f, Cudd &cudd, int loops)
-// {
-//     for (int i = 1; i < nVariables; i++)
-//     {
-//         auto x = rand();
-//         if (loops == 0)
-//         {
-//             switch (x % 4)
-//             {
-//             case 0:
-//                 f = f * cudd.bddVar();
-//                 break;
-//             case 1:
-//                 f = f + cudd.bddVar();
-//                 break;
-//             case 2:
-//                 f = f * !(cudd.bddVar());
-//                 break;
-//             case 3:
-//                 f = f + !(cudd.bddVar());
-//                 break;
-//             default:
-//                 break;
-//             }
-//         }
-//         else
-//         {
-//             switch (x % 4)
-//             {
-//             case 0:
-//                 f = f * cudd.bddVar(i);
-//                 break;
-//             case 1:
-//                 f = f + cudd.bddVar(i);
-//                 break;
-//             case 2:
-//                 f = f * !(cudd.bddVar(i));
-//                 break;
-//             case 3:
-//                 f = f + !(cudd.bddVar(i));
-//                 break;
-//             default:
-//                 break;
-//             }
-//         }
-//     }
-// }

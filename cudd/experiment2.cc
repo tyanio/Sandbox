@@ -1,48 +1,62 @@
-#include <stdio.h>
+#include <sys/types.h>
+#include <sys/time.h>
 #include <iostream>
+#include <string.h>
+#include <time.h>
+#include <math.h>
+#include <stdlib.h>
+#include "cudd.h"
 #include <chrono>
-#include "cuddObj.hh"
 
 using namespace std;
 
-void random_vars(int, BDD &, Cudd &, int);
-
-int main()
+int main(int argc, char *argv[])
 {
-    const int nVariables = 10000;
-    const int loops = 5;
+    DdManager *gbm; /* Global BDD manager. */
     auto msec = 0;
+    auto loops = 1;
 
-    Cudd cudd;
-    for (int i = 0; i < nVariables; i++)
+    // キャッシュを貯める
+    gbm = Cudd_Init(0, 0, CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS, 0); /* Initialize a new BDD manager. */
+    DdNode *bdd, *var, *tmp_neg, *tmp;
+    bdd = Cudd_ReadOne(gbm); /*Returns the logic one constant of the manager*/
+    Cudd_Ref(bdd);           /*Increases the reference count of a node*/
+    for (int j = 10000; j >= 0; j--)
     {
-        cudd.bddVar();
+        var = Cudd_bddIthVar(gbm, j);     /*Create a new BDD variable*/
+        tmp = Cudd_bddAnd(gbm, var, bdd); /*Perform AND Boolean operation*/
+        Cudd_Ref(tmp);
+        Cudd_RecursiveDeref(gbm, bdd);
+        bdd = tmp;
     }
 
-    BDD f = cudd.bddVar(0);
-    for (int i = 1; i < nVariables; i++)
+    // キャッシュをためた状態での実行速度を測る
+    for (size_t i = 0; i < loops; i++)
     {
-        f = f * cudd.bddVar(i);
-    }
+        DdNode *bdd, *var, *tmp_neg, *tmp;
+        bdd = Cudd_ReadOne(gbm); /*Returns the logic one constant of the manager*/
+        Cudd_Ref(bdd);           /*Increases the reference count of a node*/
 
-    // Cudd_PrintDebug(cudd.getManager(), f.getNode(), nVariables, 3);
-
-    for (int i = 0; i < loops; i++)
-    {
         auto start = chrono::system_clock::now();
-        f = cudd.bddVar(0);
-        for (int i = 1; i < nVariables; i++)
+
+        for (int j = 10000; j >= 0; j--)
         {
-            f = f * cudd.bddVar(i);
+            var = Cudd_bddIthVar(gbm, j);     /*Create a new BDD variable*/
+            tmp = Cudd_bddAnd(gbm, var, bdd); /*Perform AND Boolean operation*/
+            Cudd_Ref(tmp);
+            Cudd_RecursiveDeref(gbm, bdd);
+            bdd = tmp;
         }
+
         auto end = chrono::system_clock::now();
         auto dur = end - start;
-        msec += chrono::duration_cast<chrono::microseconds>(dur).count();
-        // Cudd_PrintDebug(cudd.getManager(), f.getNode(), nVariables, 3);
+        msec += chrono::duration_cast<chrono::nanoseconds>(dur).count();
     }
 
-    // Cudd_PrintDebug(cudd.getManager(), f.getNode(), nVariables, 3);
+    Cudd_Quit(gbm);
 
     msec /= loops;
-    cout << "average: " << msec << " micro sec \n";
+    cout << "average time: " << msec << " nano secs." << endl;
+
+    return 0;
 }
