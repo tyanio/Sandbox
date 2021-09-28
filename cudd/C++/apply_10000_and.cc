@@ -25,7 +25,7 @@ int main()
 
         BDD f = cudd.bddVar(0);
 
-        for (int i = 1; i < nVariables; i++)
+        for (int i = nVariables-1; i >= 0; i--)
         {
             f = f * cudd.bddVar(i);
         }
