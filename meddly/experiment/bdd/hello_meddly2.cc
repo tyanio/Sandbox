@@ -233,27 +233,27 @@ int main(int argc, char *argv[])
     element[3][1] = 1;
     element[3][2] = 1;
 
-    element[4][0] = 0;
-    element[4][1] = 0;
-    element[4][2] = 0;
-    element[5][0] = 0;
-    element[5][1] = 0;
-    element[5][2] = 1;
-    element[6][0] = 0;
-    element[6][1] = 1;
-    element[6][2] = 0;
-    element[7][0] = 0;
-    element[7][1] = 1;
-    element[7][2] = 1;
+    // element[4][0] = 0;
+    // element[4][1] = 0;
+    // element[4][2] = 0;
+    // element[5][0] = 0;
+    // element[5][1] = 0;
+    // element[5][2] = 1;
+    // element[6][0] = 0;
+    // element[6][1] = 1;
+    // element[6][2] = 0;
+    // element[7][0] = 0;
+    // element[7][1] = 1;
+    // element[7][2] = 1;
 
     terms[0] = 0;
     terms[1] = 0;
     terms[2] = 0;
     terms[3] = 65535;
-    terms[4] = 0;
-    terms[5] = 0;
-    terms[6] = 0;
-    terms[7] = -1;
+    // terms[4] = 0;
+    // terms[5] = 0;
+    // terms[6] = 0;
+    // terms[7] = -1;
 
     // initialize the variable bounds array to provide to the domain
 
