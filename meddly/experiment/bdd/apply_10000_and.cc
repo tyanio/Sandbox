@@ -86,6 +86,11 @@ int main(int argc, char *argv[])
         ofs << msec << "," << endl;
         cout << msec << " nano sec \n";
 
+        free(bounds);
+        // for (int i = 0; i < nElements; ++i){
+        //     free(element[i]);
+        // }
+        free(element);
         cleanup();
     }
 }
