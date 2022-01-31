@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     for (size_t i = 0; i < 100; i++)
     {
         int nVariables = 10000;
-        int variableBound = 2;
+        int variableBound = 5;
         int nElements = nVariables;
 
         // initialize the variable bounds array to provide to the domain
@@ -26,6 +26,8 @@ int main(int argc, char *argv[])
         }
 
         // create the elements
+        // elementのiは要素の何番目かを指していて、jはその要素の変数のレベルを指しています。
+        // 下の場合、i番目のelementはi+1のレベルの変数のとき5番目の枝を選びそれ以外はDontcare、つまりi+1番目のレベル以外は省略されている変数ノードを作っていることになります。
         int **element = (int **)malloc(nElements * sizeof(int *));
         for (int i = 0; i < nElements; ++i)
         {
@@ -35,7 +37,7 @@ int main(int argc, char *argv[])
             {
                 if (i + 1 == j)
                 {
-                    element[i][j] = 1;
+                    element[i][j] = 4;
                 }
                 else
                 {
@@ -43,6 +45,16 @@ int main(int argc, char *argv[])
                 }
             }
         }
+
+        // for (int i = 0; i < nElements; ++i)
+        // {
+        //     printf("Element %d: [%d", i, element[i][0]);
+        //     for (int j = 1; j <= nVariables; ++j)
+        //     {
+        //         printf(" %d", element[i][j]);
+        //     }
+        //     printf(": %ld]\n", 1);
+        // }
 
         initialize();
 
@@ -70,6 +82,7 @@ int main(int argc, char *argv[])
 
         auto start = chrono::system_clock::now();
 
+        // Apply演算のAndだけを図りたいのでここだけ時間を図っています。
         for (int i = 0; i < nVariables; i++)
         {
             B *= vars[i];
@@ -77,7 +90,7 @@ int main(int argc, char *argv[])
 
         auto end = chrono::system_clock::now();
 
-        // C.show(meddlyout, 2);
+        // B.show(meddlyout, 2);
         // bdd->showInfo(meddlyout);
 
         auto dur = end - start;
